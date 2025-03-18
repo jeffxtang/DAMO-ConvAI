@@ -2,6 +2,7 @@ import sys
 import json
 import argparse
 import sqlite3
+import re
 import multiprocessing as mp
 from func_timeout import func_timeout, FunctionTimedOut
 
@@ -58,7 +59,21 @@ def package_sqls(sql_path, db_root_path, mode='gpt', data_mode='dev'):
                 sql, db_name = sql_str.split('\t----- bird -----\t')
             else:
                 sql, db_name = " ", "financial"
+            
+            # for gpt-3.5-turbo
+            # clean_sqls.append("SELECT " + sql)
+
+            # for gpt-4o
+            # pattern = re.compile(r'```sql\n*(.*?)```', re.DOTALL)
+            # matches = pattern.findall(sql)
+            # if matches != []:
+            #     sql = matches[0]
+            # clean_sqls.append(sql)                
+
+            # for llama 3.3 70b
             clean_sqls.append(sql)
+
+            print(sql)
             db_path_list.append(db_root_path + db_name + '/' + db_name + '.sqlite')
 
     elif mode == 'gt':
